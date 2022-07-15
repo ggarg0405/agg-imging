@@ -1,0 +1,35 @@
+%reading files
+a=imread(filenames{i});
+%converting to grayscale
+ga=rgb2gray(a);
+%inserting figure
+figure
+%subplot for showing grayscale image
+subplot(2,3,1);
+imshow(ga,'InitialMagnification','fit') 
+title('Original');
+%applying 2D median filter
+%The value in brackets represents the median matrix
+b=medfilt2(ga,[6 6]);
+subplot(2,3,2);
+imshow(b,'InitialMagnification','fit')
+title('Medfil');
+%contrast adjustment to determine difference between aggregate and bitumen
+k=imadjust(b);
+subplot(2,3,3);
+imshow(k,'InitialMagnification','fit')
+title('Contrast ajdustment');
+%Maxima removal to darken the image
+c = imhmax(k,50);
+subplot(2,3,4);imshow(c,'InitialMagnification','fit')
+title('hmax');
+%binary conversion based on the ratio used
+e=im2bw(c,0.5);
+subplot(2,3,5);imshow(e,'InitialMagnification','fit')
+title('threshold');
+%calculating the uncoated percentage of space
+[wht, blk]=Cntpxls(e);
+uncoated = 100*wht/(wht+blk);
+subplot(2, 3, 6);
+text(0,0.5,['Percent uncoated=' num2str(uncoated) '%']);
+set ( subplot(2, 3, 6), 'visible', 'off');
